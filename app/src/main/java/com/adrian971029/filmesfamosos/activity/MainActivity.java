@@ -5,6 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -21,13 +22,14 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    MovieTask mTask;
-    List<Movie> mMovie;
-    GridView mGridView;
-    TextView mTextMensagem;
-    ProgressBar mProgressBar;
-    ArrayAdapter<Movie> mAdapter;
-    Toolbar mToolbar;
+    private MovieTask mTask;
+    private List<Movie> mMovie;
+    private GridView mGridView;
+    private TextView mTextMensagem;
+    private ProgressBar mProgressBar;
+    private ArrayAdapter<Movie> mAdapter;
+    private Toolbar mToolbar;
+    private boolean flag;
 
 
     @Override
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        flag = false;
         inicializandoComponentes();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -47,6 +50,28 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main,menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if(id == R.id.menu_popular_movie){
+            flag = false;
+            mTask = null;
+            mAdapter.clear();
+            mMovie.clear();
+            crearLayoutPrincipal();
+        }
+        else if(id == R.id.menu_top_rated){
+            flag = true;
+            mTask = null;
+            mAdapter.clear();
+            mMovie.clear();
+            crearLayoutPrincipal();
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private void crearLayoutPrincipal(){
@@ -101,7 +126,12 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected List<Movie> doInBackground(Void... voids) {
-            return MovieHttp.carregarMoviePopularJson();
+            if (!flag){
+                return MovieHttp.carregarMoviePopularJson();
+            }
+            else {
+                return MovieHttp.carregarMovieTopRated();
+            }
         }
 
         @Override
