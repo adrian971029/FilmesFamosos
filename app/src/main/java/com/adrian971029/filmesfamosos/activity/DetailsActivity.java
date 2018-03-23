@@ -3,6 +3,8 @@ package com.adrian971029.filmesfamosos.activity;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import com.adrian971029.filmesfamosos.R;
+
 public class DetailsActivity extends AppCompatActivity {
 
     @Override
