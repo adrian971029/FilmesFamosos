@@ -64,6 +64,27 @@ public class MovieHttp {
         return null;
     }
 
+    public static List<Movie> carregarMovieTopRated(){
+        try {
+            HttpURLConnection conexao = connection(Constants.URL_BASE +
+                    Constants.TOP_RATED_URL+
+                    Constants.API_KEY +
+                    Constants.Q_LANGUAGE +
+                    Constants.LANGUAGE
+            );
+
+            int resposta = conexao.getResponseCode();
+            if(resposta == HttpURLConnection.HTTP_OK){
+                InputStream is = conexao.getInputStream();
+                JSONObject jsonObject = new JSONObject(byteParaString(is));
+                return lerJsonMovies(jsonObject);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public static List<Movie> lerJsonMovies(JSONObject json) throws JSONException {
         List<Movie> listMovie = new ArrayList<Movie>();
         String poster_path, overview, release_date, original_title, original_language, title, backdrop_path;
