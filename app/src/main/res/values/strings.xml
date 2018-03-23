@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">FilmesFamosos</string>
+    <string name="baixando_filmes">Baixando informações dos filmes</string>
+    <string name="falha_filmes">Falha ao obter filmes</string>
+    <string name="sem_conexao">Sem Conexão</string>
+    <string name="populares">Populares</string>
+    <string name="mais_votadas">Mais votadas</string>
 </resources>
