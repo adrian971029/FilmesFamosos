@@ -5,4 +5,10 @@
     <string name="sem_conexao">Sem Conexão</string>
     <string name="populares">Populares</string>
     <string name="mais_votadas">Mais votadas</string>
+    <string name="titulo">Titulo:</string>
+    <string name="titulo_original">Titulo Original:</string>
+    <string name="filme_de_adultos">Filme de Adultos:</string>
+    <string name="avalia_o_dos_usuarios">Avaliação:</string>
+    <string name="data_de_lan_amento">Data de Lançamento:</string>
+    <string name="descricao">Descrição:</string>
 </resources>
