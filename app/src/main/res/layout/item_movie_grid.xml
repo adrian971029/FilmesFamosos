@@ -21,7 +21,8 @@
             android:layout_height="280dp"
             android:layout_gravity="center"
             android:focusable="true"
-            android:clickable="true"/>
+            android:clickable="true"
+            android:background="@drawable/fondo"/>
 
     </android.support.v7.widget.CardView>
 
