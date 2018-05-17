@@ -71,7 +71,7 @@ public class VideoHttp {
                     site,
                     size,
                     type
-            )
+            );
             listVideo.add(video);
         }
         return listVideo;
