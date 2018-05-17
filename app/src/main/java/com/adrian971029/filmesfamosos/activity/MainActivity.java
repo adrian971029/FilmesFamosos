@@ -15,7 +15,8 @@ import android.widget.TextView;
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.MovieAdapter;
 import com.adrian971029.filmesfamosos.model.Movie;
-import com.adrian971029.filmesfamosos.utils.MovieHttp;
+import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
+import com.adrian971029.filmesfamosos.utils.network.MovieHttp;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         mAdapter = new MovieAdapter(getApplicationContext(),mMovie);
         mGridView.setAdapter(mAdapter);
         if(mTask == null){
-            if(MovieHttp.temConexao(this)){
+            if(HttpConnection.temConexao(this)){
                 iniciarDownload();
             }
             else{

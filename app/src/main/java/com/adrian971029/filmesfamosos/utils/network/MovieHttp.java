@@ -1,10 +1,11 @@
-package com.adrian971029.filmesfamosos.utils;
+package com.adrian971029.filmesfamosos.utils.network;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.adrian971029.filmesfamosos.model.Movie;
+import com.adrian971029.filmesfamosos.utils.Constants;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -24,28 +25,9 @@ import java.util.List;
 
 public class MovieHttp {
 
-    private static HttpURLConnection connection(String urlArquivo) throws IOException {
-        final int SEGUNDOS = 1000;
-        URL url = new URL(urlArquivo);
-        HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-        connection.setReadTimeout((10*SEGUNDOS));
-        connection.setConnectTimeout(15*SEGUNDOS);
-        connection.setRequestMethod("GET");
-        connection.setDoInput(true);
-        connection.setDoOutput(false);
-        connection.connect();
-        return connection;
-    }
-
-    public static boolean temConexao(Context context){
-        ConnectivityManager connectivityManager = (ConnectivityManager)context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo info = connectivityManager.getActiveNetworkInfo();
-        return (info != null && info.isConnected());
-    }
-
     public static List<Movie> carregarMoviePopularJson(){
         try {
-            HttpURLConnection conexao = connection(Constants.URL_BASE +
+            HttpURLConnection conexao = HttpConnection.connection(Constants.URL_BASE +
                     Constants.POPULAR_MOVIE_URL +
                     Constants.API_KEY +
                     Constants.Q_LANGUAGE +
@@ -55,7 +37,7 @@ public class MovieHttp {
             int resposta = conexao.getResponseCode();
             if(resposta == HttpURLConnection.HTTP_OK){
                 InputStream is = conexao.getInputStream();
-                JSONObject jsonObject = new JSONObject(byteParaString(is));
+                JSONObject jsonObject = new JSONObject(HttpConnection.byteParaString(is));
                 return lerJsonMovies(jsonObject);
             }
         }catch (Exception e){
@@ -66,7 +48,7 @@ public class MovieHttp {
 
     public static List<Movie> carregarMovieTopRated(){
         try {
-            HttpURLConnection conexao = connection(Constants.URL_BASE +
+            HttpURLConnection conexao = HttpConnection.connection(Constants.URL_BASE +
                     Constants.TOP_RATED_URL+
                     Constants.API_KEY +
                     Constants.Q_LANGUAGE +
@@ -76,7 +58,7 @@ public class MovieHttp {
             int resposta = conexao.getResponseCode();
             if(resposta == HttpURLConnection.HTTP_OK){
                 InputStream is = conexao.getInputStream();
-                JSONObject jsonObject = new JSONObject(byteParaString(is));
+                JSONObject jsonObject = new JSONObject(HttpConnection.byteParaString(is));
                 return lerJsonMovies(jsonObject);
             }
         }catch (Exception e){
@@ -142,16 +124,6 @@ public class MovieHttp {
             listMovie.add(movie);
         }
         return listMovie;
-    }
-
-    private static String byteParaString(InputStream is) throws IOException{
-        byte[] buffer = new byte[1024];
-        ByteArrayOutputStream bufferzao = new ByteArrayOutputStream();
-        int byteLidos;
-        while((byteLidos = is.read(buffer)) != -1){
-            bufferzao.write(buffer,0,byteLidos);
-        }
-        return  new String(bufferzao.toByteArray(),"UTF-8");
     }
 
 }
