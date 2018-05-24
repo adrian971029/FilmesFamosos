@@ -57,6 +57,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
     private void llamaDetailsActivity(Movie movie){
         Intent i = new Intent(getContext(), DetailsActivity.class);
+        i.putExtra("ID_MOVIE",movie.getId());
         i.putExtra("POSTER_PATH",movie.getPoster_path());
         i.putExtra("ADULT",movie.isAdult());
         i.putExtra("OVERVIEW",movie.getOverview());

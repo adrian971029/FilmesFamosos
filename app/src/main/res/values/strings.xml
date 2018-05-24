@@ -12,4 +12,5 @@
     <string name="data_de_lan_amento">Data de Lançamento:</string>
     <string name="descricao">Descrição:</string>
     <string name="action_title">Filmes Famosos</string>
+    <string name="cd_reproducao_trailer">Reprodução do trailer</string>
 </resources>

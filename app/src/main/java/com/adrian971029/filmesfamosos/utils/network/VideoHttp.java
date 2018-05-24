@@ -14,9 +14,11 @@ import java.util.List;
 
 public class VideoHttp {
 
-    public static List<Video> carregarVideoJson(){
+    public static List<Video> carregarVideoJson(String id){
         try {
             HttpURLConnection conexao = HttpConnection.connection(Constants.URL_BASE +
+                    Constants.MOVIE +
+                    id + "/" +
                     Constants.VIDEO_URL +
                     Constants.API_KEY +
                     Constants.Q_LANGUAGE +
