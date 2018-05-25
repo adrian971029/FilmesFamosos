@@ -13,11 +13,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.adrian971029.filmesfamosos.R;
+import com.adrian971029.filmesfamosos.adapter.ReviewAdapter;
 import com.adrian971029.filmesfamosos.adapter.VideoAdapter;
 import com.adrian971029.filmesfamosos.model.Review;
 import com.adrian971029.filmesfamosos.model.Video;
 import com.adrian971029.filmesfamosos.utils.Constants;
 import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
+import com.adrian971029.filmesfamosos.utils.network.ReviewHttp;
 import com.adrian971029.filmesfamosos.utils.network.VideoHttp;
 import com.squareup.picasso.Picasso;
 
@@ -35,10 +37,15 @@ public class DetailsActivity extends AppCompatActivity {
     private List<Video> mVideo;
     private List<Review> mReview;
     private ArrayAdapter<Video> mAdapterVideo;
+    private ArrayAdapter<Review> mAdapterReview;
     private VideoTask mVideoTask;
+    private ReviewTask mReviewTask;
     private ListView mListViewVideo;
-    private ProgressBar mProgressBar;
-    private TextView mTextMensagem;
+    private ListView mListViewReview;
+    private ProgressBar mProgressBarVideo;
+    private ProgressBar mProgressBarReview;
+    private TextView mTextMensagemVideo;
+    private TextView mTextMensagemReview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +56,7 @@ public class DetailsActivity extends AppCompatActivity {
         recibiendoValores();
         mostrandoValores();
         crearLayoutTrailer();
+        crearLayoutReview();
 
     }
 
@@ -62,8 +70,11 @@ public class DetailsActivity extends AppCompatActivity {
         mReleaseDate = (TextView)findViewById(R.id.tv_releaseDate);
         mVoteAverage = (TextView)findViewById(R.id.tv_voteAverage);
         mListViewVideo = (ListView)findViewById(R.id.lv_trailerVideo);
-        mProgressBar = (ProgressBar)findViewById(R.id.progressBarVideo);
-        mTextMensagem = (TextView)findViewById(R.id.tv_aguardeVideo);
+        mListViewReview = (ListView)findViewById(R.id.lv_reviews);
+        mProgressBarVideo = (ProgressBar)findViewById(R.id.progressBarVideo);
+        mTextMensagemVideo = (TextView)findViewById(R.id.tv_aguardeVideo);
+        mProgressBarReview = (ProgressBar)findViewById(R.id.progressBarReviews);
+        mTextMensagemReview = (TextView)findViewById(R.id.tv_aguardeReviews);
     }
 
     private void recibiendoValores(){
@@ -106,20 +117,47 @@ public class DetailsActivity extends AppCompatActivity {
                 iniciarDownloadVideo();
             }
             else{
-                mTextMensagem.setText(R.string.sem_conexao);
+                mTextMensagemVideo.setText(R.string.sem_conexao);
             }
         }
         else if(mVideoTask.getStatus() == AsyncTask.Status.RUNNING){
-            exibirProgress(true);
+            exibirProgressVideo(true);
         }
     }
 
-    private void exibirProgress(boolean exibir){
-        if(exibir){
-            mTextMensagem.setText(R.string.baixando_filmes);
+    private void crearLayoutReview(){
+        if(mReview == null){
+            mReview = new ArrayList<Review>();
         }
-        mTextMensagem.setVisibility(exibir ? View.VISIBLE : View.GONE);
-        mProgressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        mAdapterReview = new ReviewAdapter(getApplicationContext(),mReview);
+        mListViewReview.setAdapter(mAdapterReview);
+        if(mReviewTask == null){
+            if(HttpConnection.temConexao(this)){
+                iniciarDownloadReview();
+            }
+            else{
+                mTextMensagemReview.setText(R.string.sem_conexao);
+            }
+        }
+        else if(mReviewTask.getStatus() == AsyncTask.Status.RUNNING){
+            exibirProgressReview(true);
+        }
+    }
+
+    private void exibirProgressVideo(boolean exibir){
+        if(exibir){
+            mTextMensagemVideo.setText(R.string.baixando_informacoes);
+        }
+        mTextMensagemVideo.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        mProgressBarVideo.setVisibility(exibir ? View.VISIBLE : View.GONE);
+    }
+
+    private void exibirProgressReview(boolean exibir){
+        if(exibir){
+            mTextMensagemReview.setText(R.string.baixando_informacoes);
+        }
+        mTextMensagemReview.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        mProgressBarReview.setVisibility(exibir ? View.VISIBLE : View.GONE);
     }
 
     private void iniciarDownloadVideo(){
@@ -129,12 +167,19 @@ public class DetailsActivity extends AppCompatActivity {
         }
     }
 
+    private void iniciarDownloadReview(){
+        if(mReviewTask == null || mReviewTask.getStatus() != AsyncTask.Status.RUNNING){
+            mReviewTask = new ReviewTask();
+            mReviewTask.execute();
+        }
+    }
+
     class VideoTask extends AsyncTask<Void,Void,List<Video>> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            exibirProgress(true);
+            exibirProgressVideo(true);
         }
 
         @Override
@@ -145,14 +190,42 @@ public class DetailsActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(List<Video> videos) {
             super.onPostExecute(videos);
-            exibirProgress(false);
+            exibirProgressVideo(false);
             if(videos != null){
                 mVideo.clear();
                 mVideo.addAll(videos);
                 mAdapterVideo.notifyDataSetChanged();
             }
             else {
-                mTextMensagem.setText(R.string.falha_filmes);
+                mTextMensagemVideo.setText( R.string.falha_filmes_trailers);
+            }
+        }
+    }
+
+    class ReviewTask extends AsyncTask<Void,Void,List<Review>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            exibirProgressReview(true);
+        }
+
+        @Override
+        protected List<Review> doInBackground(Void...voids) {
+            return ReviewHttp.carregarReviewJson(String.valueOf(id_movie));
+        }
+
+        @Override
+        protected void onPostExecute(List<Review> reviews) {
+            super.onPostExecute(reviews);
+            exibirProgressReview(false);
+            if(reviews != null){
+                mReview.clear();
+                mReview.addAll(reviews);
+                mAdapterReview.notifyDataSetChanged();
+            }
+            else {
+                mTextMensagemReview.setText(R.string.falha_reviews);
             }
         }
     }

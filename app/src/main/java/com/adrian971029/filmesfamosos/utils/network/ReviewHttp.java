@@ -14,9 +14,11 @@ import java.util.List;
 
 public class ReviewHttp {
 
-    public static List<Review> carregarReviewJson(){
+    public static List<Review> carregarReviewJson(String id){
         try {
             HttpURLConnection conexao = HttpConnection.connection(Constants.URL_BASE +
+                    Constants.MOVIE +
+                    id + "/" +
                     Constants.REVIEWS_URL +
                     Constants.API_KEY +
                     Constants.Q_LANGUAGE +
@@ -49,9 +51,9 @@ public class ReviewHttp {
             JSONObject jsonUrl = jsonResults.getJSONObject(i);
 
             id = jsonId.getString("id");
-            author = jsonAuthor.getString("iso_639_1");
-            content = jsonContent.getString("iso_3166_1");
-            url = jsonUrl.getString("key");
+            author = jsonAuthor.getString("author");
+            content = jsonContent.getString("content");
+            url = jsonUrl.getString("url");
 
            Review review = new Review(
                    id,

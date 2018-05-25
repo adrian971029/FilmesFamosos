@@ -244,9 +244,8 @@
 
                     <ProgressBar
                         android:id="@+id/progressBarVideo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
                         android:layout_centerInParent="true"
                         android:visibility="gone"/>
 
@@ -259,8 +258,40 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <android.support.v4.widget.Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
 
+                <LinearLayout
+                    android:layout_margin="8dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ListView
+                        android:id="@+id/lv_reviews"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp">
+                    </ListView>
+
+                    <ProgressBar
+                        android:id="@+id/progressBarReviews"
+                        android:layout_width="5dp"
+                        android:layout_height="5dp"
+                        android:layout_centerInParent="true"
+                        android:visibility="gone"/>
+
+                    <TextView
+                        android:id="@+id/tv_aguardeReviews"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/progressBar"
+                        android:layout_centerHorizontal="true"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
 
         </ScrollView>
 

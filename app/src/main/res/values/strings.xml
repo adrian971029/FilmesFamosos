@@ -13,4 +13,9 @@
     <string name="descricao">Descrição:</string>
     <string name="action_title">Filmes Famosos</string>
     <string name="cd_reproducao_trailer">Reprodução do trailer</string>
+    <string name="falha_filmes_trailers">Falha ao obter trailers dos filmes</string>
+    <string name="baixando_informacoes">Baixando informações</string>
+    <string name="trailers">Trailers:</string>
+    <string name="comentarios">Comentarios:</string>
+    <string name="falha_reviews">Falha ao obter reviews</string>
 </resources>
