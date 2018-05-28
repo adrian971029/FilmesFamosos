@@ -1,9 +1,9 @@
 package com.adrian971029.filmesfamosos.activity;
 
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,16 +14,22 @@ import android.widget.TextView;
 
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.MovieAdapter;
+import com.adrian971029.filmesfamosos.io.ApiAdapter;
+import com.adrian971029.filmesfamosos.io.ApiService;
+import com.adrian971029.filmesfamosos.io.response.PopularResponse;
+import com.adrian971029.filmesfamosos.io.response.TopRatedResponse;
 import com.adrian971029.filmesfamosos.model.Movie;
 import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
-import com.adrian971029.filmesfamosos.utils.network.MovieHttp;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class MainActivity extends AppCompatActivity {
 
-    private MovieTask mTask;
     private List<Movie> mMovie;
     private GridView mGridView;
     private TextView mTextMensagem;
@@ -43,7 +49,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbar.setTitle(R.string.action_title);
-        crearLayoutPrincipal();
+        exibirProgress(true);
+        crearLayoutPopular();
 
     }
 
@@ -59,39 +66,52 @@ public class MainActivity extends AppCompatActivity {
 
         if(id == R.id.menu_popular_movie){
             flag = false;
-            mTask = null;
             mAdapter.clear();
             mMovie.clear();
-            crearLayoutPrincipal();
+            crearLayoutPopular();
         }
         else if(id == R.id.menu_top_rated){
             flag = true;
-            mTask = null;
             mAdapter.clear();
             mMovie.clear();
-            crearLayoutPrincipal();
+            crearLayoutTopRated();
         }
 
         return super.onOptionsItemSelected(item);
     }
 
-    private void crearLayoutPrincipal(){
+    private void crearLayoutPopular(){
         if(mMovie == null){
             mMovie = new ArrayList<Movie>();
         }
         mAdapter = new MovieAdapter(getApplicationContext(),mMovie);
         mGridView.setAdapter(mAdapter);
-        if(mTask == null){
-            if(HttpConnection.temConexao(this)){
-                iniciarDownload();
-            }
-            else{
-                mTextMensagem.setText(R.string.sem_conexao);
-            }
+
+        if(HttpConnection.temConexao(this)){
+            chamaFilmesPopular();
         }
-        else if(mTask.getStatus() == AsyncTask.Status.RUNNING){
-            exibirProgress(true);
+        else{
+            exibirProgress(false);
+            mTextMensagem.setText(R.string.sem_conexao);
         }
+
+    }
+
+    private void crearLayoutTopRated(){
+        if(mMovie == null){
+            mMovie = new ArrayList<Movie>();
+        }
+        mAdapter = new MovieAdapter(getApplicationContext(),mMovie);
+        mGridView.setAdapter(mAdapter);
+
+        if(HttpConnection.temConexao(this)){
+            chamaTopRated();
+        }
+        else{
+            exibirProgress(false);
+            mTextMensagem.setText(R.string.sem_conexao);
+        }
+
     }
 
     private void inicializandoComponentes(){
@@ -103,51 +123,72 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void exibirProgress(boolean exibir){
-        if(exibir){
-            mTextMensagem.setText(R.string.baixando_filmes);
-        }
         mTextMensagem.setVisibility(exibir ? View.VISIBLE : View.GONE);
         mProgressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
     }
 
-    private void iniciarDownload(){
-        if(mTask == null || mTask.getStatus() != AsyncTask.Status.RUNNING){
-            mTask = new MovieTask();
-            mTask.execute();
-        }
+    private void chamaFilmesPopular(){
+        ApiService service = ApiAdapter.getApiService();
+        Call<PopularResponse> popularResponseCall = service.getPopularMovies();
+
+        popularResponseCall.enqueue(new Callback<PopularResponse>() {
+            @Override
+            public void onResponse(Call<PopularResponse> call, Response<PopularResponse> response) {
+                if(!response.isSuccessful()) {
+                    Log.i("TAG","Error:" + response.code());
+                    exibirProgress(false);
+                }
+                else {
+                    exibirProgress(false);
+                    PopularResponse popularResponse = response.body();
+                    if(popularResponse.getResults() != null){
+                        mMovie.clear();
+                        mMovie.addAll(popularResponse.getResults());
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<PopularResponse> call, Throwable t) {
+                exibirProgress(false);
+                Log.e("Movies","Error:" + t.getMessage());
+            }
+
+        });
+
     }
 
-    class MovieTask extends AsyncTask<Void,Void,List<Movie>>{
+    private void chamaTopRated(){
+        ApiService service = ApiAdapter.getApiService();
+        Call<TopRatedResponse> topRatedResponseCall = service.getTopRatedMovies();
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            exibirProgress(true);
-        }
+        topRatedResponseCall.enqueue(new Callback<TopRatedResponse>() {
+            @Override
+            public void onResponse(Call<TopRatedResponse> call, Response<TopRatedResponse> response) {
+                if(!response.isSuccessful()) {
+                    Log.i("TAG","Error:" + response.code());
+                    exibirProgress(false);
+                }
+                else {
+                    exibirProgress(false);
+                    TopRatedResponse topRatedResponse = response.body();
+                    if(topRatedResponse.getResults() != null){
+                        mMovie.clear();
+                        mMovie.addAll(topRatedResponse.getResults());
+                        mAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
 
-        @Override
-        protected List<Movie> doInBackground(Void... voids) {
-            if (!flag){
-                return MovieHttp.carregarMoviePopularJson();
+            @Override
+            public void onFailure(Call<TopRatedResponse> call, Throwable t) {
+                exibirProgress(false);
+                Log.e("Movies","Error:" + t.getMessage());
             }
-            else {
-                return MovieHttp.carregarMovieTopRated();
-            }
-        }
 
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            super.onPostExecute(movies);
-            exibirProgress(false);
-            if(movies != null){
-                mMovie.clear();
-                mMovie.addAll(movies);
-                mAdapter.notifyDataSetChanged();
-            }
-            else {
-                mTextMensagem.setText(R.string.falha_filmes);
-            }
-        }
+        });
+
     }
 
 }

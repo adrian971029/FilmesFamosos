@@ -39,6 +39,7 @@ public class VideoAdapter extends ArrayAdapter<Video> {
         holder.tituloVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
             }
         });
 

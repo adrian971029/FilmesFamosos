@@ -1,7 +1,6 @@
 package com.adrian971029.filmesfamosos.activity;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,16 +14,22 @@ import android.widget.TextView;
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.ReviewAdapter;
 import com.adrian971029.filmesfamosos.adapter.VideoAdapter;
+import com.adrian971029.filmesfamosos.io.ApiAdapter;
+import com.adrian971029.filmesfamosos.io.ApiService;
+import com.adrian971029.filmesfamosos.io.response.ReviewResponse;
+import com.adrian971029.filmesfamosos.io.response.VideoResponse;
 import com.adrian971029.filmesfamosos.model.Review;
 import com.adrian971029.filmesfamosos.model.Video;
 import com.adrian971029.filmesfamosos.utils.Constants;
 import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
-import com.adrian971029.filmesfamosos.utils.network.ReviewHttp;
-import com.adrian971029.filmesfamosos.utils.network.VideoHttp;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class DetailsActivity extends AppCompatActivity {
 
@@ -38,8 +43,6 @@ public class DetailsActivity extends AppCompatActivity {
     private List<Review> mReview;
     private ArrayAdapter<Video> mAdapterVideo;
     private ArrayAdapter<Review> mAdapterReview;
-    private VideoTask mVideoTask;
-    private ReviewTask mReviewTask;
     private ListView mListViewVideo;
     private ListView mListViewReview;
     private ProgressBar mProgressBarVideo;
@@ -55,6 +58,8 @@ public class DetailsActivity extends AppCompatActivity {
         inicializandoComponentes();
         recibiendoValores();
         mostrandoValores();
+        exibirProgressVideo(true);
+        exibirProgressReview(true);
         crearLayoutTrailer();
         crearLayoutReview();
 
@@ -110,38 +115,34 @@ public class DetailsActivity extends AppCompatActivity {
         if(mVideo == null){
             mVideo = new ArrayList<Video>();
         }
+
         mAdapterVideo = new VideoAdapter(getApplicationContext(),mVideo);
         mListViewVideo.setAdapter(mAdapterVideo);
-        if(mVideoTask == null){
-            if(HttpConnection.temConexao(this)){
-                iniciarDownloadVideo();
-            }
-            else{
-                mTextMensagemVideo.setText(R.string.sem_conexao);
-            }
+
+        if(HttpConnection.temConexao(this)){
+            chamaVideos();
         }
-        else if(mVideoTask.getStatus() == AsyncTask.Status.RUNNING){
-            exibirProgressVideo(true);
+        else{
+            mTextMensagemReview.setText(R.string.sem_conexao);
         }
+
     }
 
     private void crearLayoutReview(){
         if(mReview == null){
             mReview = new ArrayList<Review>();
         }
+
         mAdapterReview = new ReviewAdapter(getApplicationContext(),mReview);
         mListViewReview.setAdapter(mAdapterReview);
-        if(mReviewTask == null){
-            if(HttpConnection.temConexao(this)){
-                iniciarDownloadReview();
-            }
-            else{
-                mTextMensagemReview.setText(R.string.sem_conexao);
-            }
+
+        if(HttpConnection.temConexao(this)){
+                chamaReviews();
         }
-        else if(mReviewTask.getStatus() == AsyncTask.Status.RUNNING){
-            exibirProgressReview(true);
+        else{
+            mTextMensagemReview.setText(R.string.sem_conexao);
         }
+
     }
 
     private void exibirProgressVideo(boolean exibir){
@@ -160,74 +161,68 @@ public class DetailsActivity extends AppCompatActivity {
         mProgressBarReview.setVisibility(exibir ? View.VISIBLE : View.GONE);
     }
 
-    private void iniciarDownloadVideo(){
-        if(mVideoTask == null || mVideoTask.getStatus() != AsyncTask.Status.RUNNING){
-            mVideoTask = new VideoTask();
-            mVideoTask.execute();
-        }
+    private void chamaVideos(){
+        ApiService service = ApiAdapter.getApiService();
+        Call<VideoResponse> videoResponseCall = service.getVideos(String.valueOf(id_movie));
+
+        videoResponseCall.enqueue(new Callback<VideoResponse>() {
+            @Override
+            public void onResponse(Call<VideoResponse> call, Response<VideoResponse> response) {
+                if(!response.isSuccessful()) {
+                    Log.i("TAG","Error:" + response.code());
+                    exibirProgressVideo(false);
+                }
+                else {
+                    exibirProgressVideo(false);
+                    VideoResponse videoResponse = response.body();
+                    if(videoResponse.getResults() != null){
+                        mVideo.clear();
+                        mVideo.addAll(videoResponse.getResults());
+                        mAdapterVideo.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<VideoResponse> call, Throwable t) {
+                exibirProgressVideo(false);
+                Log.e("Movies","Error:" + t.getMessage());
+            }
+
+        });
+
     }
 
-    private void iniciarDownloadReview(){
-        if(mReviewTask == null || mReviewTask.getStatus() != AsyncTask.Status.RUNNING){
-            mReviewTask = new ReviewTask();
-            mReviewTask.execute();
-        }
-    }
+    private void chamaReviews(){
+        ApiService service = ApiAdapter.getApiService();
+        Call<ReviewResponse> reviewResponseCall = service.getReviews(String.valueOf(id_movie));
 
-    class VideoTask extends AsyncTask<Void,Void,List<Video>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            exibirProgressVideo(true);
-        }
-
-        @Override
-        protected List<Video> doInBackground(Void... voids) {
-            return VideoHttp.carregarVideoJson(String.valueOf(id_movie));
-        }
-
-        @Override
-        protected void onPostExecute(List<Video> videos) {
-            super.onPostExecute(videos);
-            exibirProgressVideo(false);
-            if(videos != null){
-                mVideo.clear();
-                mVideo.addAll(videos);
-                mAdapterVideo.notifyDataSetChanged();
+        reviewResponseCall.enqueue(new Callback<ReviewResponse>() {
+            @Override
+            public void onResponse(Call<ReviewResponse> call, Response<ReviewResponse> response) {
+                if(!response.isSuccessful()) {
+                    Log.i("TAG","Error:" + response.code());
+                    exibirProgressReview(false);
+                }
+                else {
+                    exibirProgressReview(false);
+                    ReviewResponse reviewResponse = response.body();
+                    if(reviewResponse.getResults() != null){
+                        mReview.clear();
+                        mReview.addAll(reviewResponse.getResults());
+                        mAdapterReview.notifyDataSetChanged();
+                    }
+                }
             }
-            else {
-                mTextMensagemVideo.setText( R.string.falha_filmes_trailers);
+
+            @Override
+            public void onFailure(Call<ReviewResponse> call, Throwable t) {
+                exibirProgressReview(false);
+                Log.e("Movies","Error:" + t.getMessage());
             }
-        }
-    }
 
-    class ReviewTask extends AsyncTask<Void,Void,List<Review>> {
+        });
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            exibirProgressReview(true);
-        }
-
-        @Override
-        protected List<Review> doInBackground(Void...voids) {
-            return ReviewHttp.carregarReviewJson(String.valueOf(id_movie));
-        }
-
-        @Override
-        protected void onPostExecute(List<Review> reviews) {
-            super.onPostExecute(reviews);
-            exibirProgressReview(false);
-            if(reviews != null){
-                mReview.clear();
-                mReview.addAll(reviews);
-                mAdapterReview.notifyDataSetChanged();
-            }
-            else {
-                mTextMensagemReview.setText(R.string.falha_reviews);
-            }
-        }
     }
 
 }
