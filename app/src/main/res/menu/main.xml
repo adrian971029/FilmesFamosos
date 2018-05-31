@@ -12,4 +12,9 @@
         app:showAsAction="never">
     </item>
 
+    <item android:id="@+id/menu_favorito"
+        android:title="@string/lbl_favoritos"
+        app:showAsAction="never">
+    </item>
+
 </menu>

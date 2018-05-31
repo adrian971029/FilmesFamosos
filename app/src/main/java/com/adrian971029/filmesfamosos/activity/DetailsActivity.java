@@ -1,6 +1,7 @@
 package com.adrian971029.filmesfamosos.activity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,10 +15,12 @@ import android.widget.TextView;
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.ReviewAdapter;
 import com.adrian971029.filmesfamosos.adapter.VideoAdapter;
+import com.adrian971029.filmesfamosos.data.dao.MovieDAO;
 import com.adrian971029.filmesfamosos.io.ApiAdapter;
 import com.adrian971029.filmesfamosos.io.ApiService;
 import com.adrian971029.filmesfamosos.io.response.ReviewResponse;
 import com.adrian971029.filmesfamosos.io.response.VideoResponse;
+import com.adrian971029.filmesfamosos.model.Movie;
 import com.adrian971029.filmesfamosos.model.Review;
 import com.adrian971029.filmesfamosos.model.Video;
 import com.adrian971029.filmesfamosos.utils.Constants;
@@ -31,7 +34,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends BaseActivity {
 
     private ImageView mPosterPath,mBackdropPath;
     private TextView mOverview,mTitle,mOriginalTitle,mReleaseDate,mAdult,mVoteAverage;
@@ -49,17 +52,23 @@ public class DetailsActivity extends AppCompatActivity {
     private ProgressBar mProgressBarReview;
     private TextView mTextMensagemVideo;
     private TextView mTextMensagemReview;
+    private ImageView mFavoritoImageView, mNaoFavoritoImageView;
+    private boolean controlFavorito;
+    private MovieDAO movieDAO;
+    private Movie movie;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
+        controlFavorito = false;
 
         inicializandoComponentes();
         recibiendoValores();
         mostrandoValores();
         exibirProgressVideo(true);
         exibirProgressReview(true);
+        controlFavorito();
         crearLayoutTrailer();
         crearLayoutReview();
 
@@ -80,6 +89,8 @@ public class DetailsActivity extends AppCompatActivity {
         mTextMensagemVideo = (TextView)findViewById(R.id.tv_aguardeVideo);
         mProgressBarReview = (ProgressBar)findViewById(R.id.progressBarReviews);
         mTextMensagemReview = (TextView)findViewById(R.id.tv_aguardeReviews);
+        mFavoritoImageView = (ImageView)findViewById(R.id.img_simfavorito);
+        mNaoFavoritoImageView = (ImageView)findViewById(R.id.img_naofavorito);
     }
 
     private void recibiendoValores(){
@@ -100,7 +111,7 @@ public class DetailsActivity extends AppCompatActivity {
         Picasso.with(getApplicationContext()).load(Constants.GET_IMAGES + backdrop_path).into(mBackdropPath);
         mTitle.append(title);
         mOriginalTitle.append(original_title);
-        if (adult){
+        if (adult == true){
             mAdult.append("Sim");
         }
         else{
@@ -224,5 +235,107 @@ public class DetailsActivity extends AppCompatActivity {
         });
 
     }
+
+    public void filmeFavorito(View view) {
+       if (!deletarCadastroBanco(String.valueOf(id_movie))) return;
+       defineVisivilidadFilmeFavorito(false);
+       guardandoFavorito(false);
+    }
+
+    public void filmeNaoFavorito(View view) {
+        if (!inserirCadastroBanco()) return;
+        defineVisivilidadFilmeFavorito(true);
+        guardandoFavorito(true);
+    }
+
+    private void guardandoFavorito(boolean favorito){
+        SharedPreferences.Editor editor = sharedPrefs.edit();
+        editor.putBoolean(String.valueOf(id_movie),favorito);
+        editor.apply();
+    }
+
+    private void defineVisivilidadFilmeFavorito(boolean isFavorito) {
+        if(isFavorito) {
+            mNaoFavoritoImageView.setVisibility(View.GONE);
+            mFavoritoImageView.setVisibility(View.VISIBLE);
+        }
+        else {
+            mFavoritoImageView.setVisibility(View.GONE);
+            mNaoFavoritoImageView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void controlFavorito() {
+        if(sharedPrefs != null) {
+            controlFavorito = sharedPrefs.getBoolean(String.valueOf(id_movie),false);
+        }
+
+        if(controlFavorito) {
+            defineVisivilidadFilmeFavorito(true);
+        }
+        else {
+            defineVisivilidadFilmeFavorito(false);
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        controlFavorito();
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        controlFavorito();
+    }
+
+    private boolean inserirCadastroBanco() {
+        movieDAO = new MovieDAO(this);
+        boolean sucesso = false;
+
+        try {
+
+            movie = new Movie();
+            movie.setId(id_movie);
+            movie.setPoster_path(poster_path);
+            movie.setAdult(adult);
+            movie.setOverview(overview);
+            movie.setRelease_date(realese_date);
+            movie.setTitle(title);
+            movie.setOriginal_title(original_title);
+            movie.setBackdrop_path(backdrop_path);
+            movie.setVote_average(vote_average);
+
+            long codMovie = movieDAO.inserir(movie);
+
+            if(codMovie > 0){
+                sucesso = true;
+            }
+            else {
+                sucesso = false;
+            }
+
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sucesso;
+
+    }
+
+    private boolean deletarCadastroBanco(String id){
+        movieDAO = new MovieDAO(this);
+        boolean sucesso = false;
+        try {
+           sucesso = movieDAO.deletar(movie,id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return sucesso;
+
+    }
+
 
 }

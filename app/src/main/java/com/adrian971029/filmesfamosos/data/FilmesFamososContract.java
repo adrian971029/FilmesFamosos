@@ -2,24 +2,20 @@ package com.adrian971029.filmesfamosos.data;
 
 import android.provider.BaseColumns;
 
-public class MoviesContract {
+public class FilmesFamososContract {
 
-    public static class MoviesEntry implements BaseColumns {
+    public static class FilmesFamososEntry implements BaseColumns {
 
-        private static final String TABLE_NAME = "movies";
-        private static final String COLUMN_POSTER_PATH = "poster_path";
-        private static final String COLUMN_ADULT = "adult";
-        private static final String COLUMN_OVERVIEW = "overview";
-        private static final String COLUMN_RELEASE_DATE = "release_date";
-        private static final String COLUMN_GENRE_IDS = "id";
-        private static final String COLUMN_ORIGINAL_TITLE = "original_title";
-        private static final String COLUMN_ORIGINAL_LANGUAGE = "original_language";
-        private static final String COLUMN_TITLE = "title";
-        private static final String COLUMN_BACKDROP_PATH = "backdrop_path";
-        private static final String COLUMN_POPULARITY = "popularity";
-        private static final String COLUMN_VOTE_COUNT = "vote_count";
-        private static final String COLUMN_VIDEO = "video";
-        private static final String COLUMN_VOTE_AVERAGE = "vote_average";
+        public static final String COLUMN_MOVIE_ID = "id";
+        public static final String TABLE_NAME = "movies";
+        public static final String COLUMN_POSTER_PATH = "poster_path";
+        public static final String COLUMN_ADULT = "adult";
+        public static final String COLUMN_OVERVIEW = "overview";
+        public static final String COLUMN_RELEASE_DATE = "release_date";
+        public static final String COLUMN_ORIGINAL_TITLE = "original_title";
+        public static final String COLUMN_TITLE = "title";
+        public static final String COLUMN_BACKDROP_PATH = "backdrop_path";
+        public static final String COLUMN_VOTE_AVERAGE = "vote_average";
 
     }
 

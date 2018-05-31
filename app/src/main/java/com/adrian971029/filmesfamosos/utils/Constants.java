@@ -17,5 +17,6 @@ public class Constants {
     public static final String Q_LANGUAGE = "&language=";
     public static final String GET_IMAGES = "http://image.tmdb.org/t/p/w185/";
     public static final String MOVIE = "movie/";
+    public static final String URL_YOUTUBE = "https://www.youtube.com/watch?v=";
 
 }

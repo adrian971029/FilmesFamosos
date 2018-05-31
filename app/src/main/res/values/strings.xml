@@ -18,4 +18,6 @@
     <string name="trailers">Trailers:</string>
     <string name="comentarios">Comentarios:</string>
     <string name="falha_reviews">Falha ao obter reviews</string>
+    <string name="lbl_favorito">Favorito</string>
+    <string name="lbl_favoritos">Favoritos</string>
 </resources>

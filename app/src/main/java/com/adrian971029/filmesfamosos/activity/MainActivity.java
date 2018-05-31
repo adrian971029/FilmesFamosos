@@ -1,6 +1,6 @@
 package com.adrian971029.filmesfamosos.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -14,6 +14,8 @@ import android.widget.TextView;
 
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.MovieAdapter;
+import com.adrian971029.filmesfamosos.adapter.MovieDataAdapter;
+import com.adrian971029.filmesfamosos.data.dao.MovieDAO;
 import com.adrian971029.filmesfamosos.io.ApiAdapter;
 import com.adrian971029.filmesfamosos.io.ApiService;
 import com.adrian971029.filmesfamosos.io.response.PopularResponse;
@@ -28,29 +30,32 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private List<Movie> mMovie;
+    private List<Movie> mMovieData;
     private GridView mGridView;
     private TextView mTextMensagem;
     private ProgressBar mProgressBar;
     private ArrayAdapter<Movie> mAdapter;
     private Toolbar mToolbar;
-    private boolean flag;
-
+    private MovieDAO movieDAO;
+    private MovieTask mMovieTask;
+    private MenuItem menuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        flag = false;
         inicializandoComponentes();
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbar.setTitle(R.string.action_title);
         exibirProgress(true);
         crearLayoutPopular();
+
+        movieDAO = new MovieDAO(this);
 
     }
 
@@ -63,18 +68,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
+        menuItem = item;
 
-        if(id == R.id.menu_popular_movie){
-            flag = false;
-            mAdapter.clear();
-            mMovie.clear();
-            crearLayoutPopular();
-        }
-        else if(id == R.id.menu_top_rated){
-            flag = true;
-            mAdapter.clear();
-            mMovie.clear();
-            crearLayoutTopRated();
+        switch (id) {
+            case R.id.menu_popular_movie:
+                mAdapter.clear();
+                mMovie.clear();
+                crearLayoutPopular();
+                break;
+            case R.id.menu_top_rated:
+                mAdapter.clear();
+                mMovie.clear();
+                crearLayoutTopRated();
+                break;
+            case R.id.menu_favorito:
+                mAdapter.clear();
+                mMovie.clear();
+                if(mMovieData != null) {
+                    mMovieData.clear();
+                }
+                crearLayoutFavoritos();
+                break;
+            default:
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -110,6 +126,20 @@ public class MainActivity extends AppCompatActivity {
         else{
             exibirProgress(false);
             mTextMensagem.setText(R.string.sem_conexao);
+        }
+
+    }
+
+    private void crearLayoutFavoritos(){
+        if(mMovieData == null){
+            mMovieData = new ArrayList<Movie>();
+        }
+        mAdapter = new MovieDataAdapter(getApplicationContext(),mMovieData);
+        mGridView.setAdapter(mAdapter);
+
+        if(mMovieTask == null || mMovieTask.getStatus() != AsyncTask.Status.RUNNING){
+            mMovieTask = new MovieTask();
+            mMovieTask.execute();
         }
 
     }
@@ -191,4 +221,60 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    class MovieTask extends AsyncTask<Void,Void,List<Movie>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<Movie> doInBackground(Void... voids) {
+            return movieDAO.buscarTodos();
+        }
+
+        @Override
+        protected void onPostExecute(List<Movie> movies) {
+            super.onPostExecute(movies);
+            exibirProgress(false);
+            if(movies != null){
+                mMovieData.clear();
+                mMovieData.addAll(movies);
+                mAdapter.notifyDataSetChanged();
+            }
+            else {
+                mTextMensagem.setText("Não tem filmes favoritos");
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(menuItem != null) {
+            int itemControl = menuItem.getItemId();
+            switch (itemControl) {
+                case R.id.menu_popular_movie:
+                    mAdapter.clear();
+                    mMovie.clear();
+                    crearLayoutPopular();
+                    break;
+                case R.id.menu_top_rated:
+                    mAdapter.clear();
+                    mMovie.clear();
+                    crearLayoutTopRated();
+                    break;
+                case R.id.menu_favorito:
+                    mAdapter.clear();
+                    mMovie.clear();
+                    if (mMovieData != null) {
+                        mMovieData.clear();
+                    }
+                    crearLayoutFavoritos();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }

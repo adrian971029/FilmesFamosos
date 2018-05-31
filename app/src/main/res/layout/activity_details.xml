@@ -70,6 +70,49 @@
 
                 <LinearLayout
                     android:layout_margin="8dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:focusedByDefault="true"
+                        android:id="@+id/tv_favorito"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lbl_favorito"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textStyle="italic"
+                        android:layout_gravity="center"/>
+
+                    <ImageView
+                        android:id="@+id/img_naofavorito"
+                        android:layout_marginLeft="5dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="top"
+                        android:onClick="filmeNaoFavorito"
+                        android:src="@drawable/estrela_sem_prencher_48"
+                        android:clickable="true"
+                        android:visibility="gone"/>
+                    <ImageView
+                        android:id="@+id/img_simfavorito"
+                        android:layout_marginLeft="5dp"
+                        android:layout_width="35dp"
+                        android:layout_height="35dp"
+                        android:layout_gravity="top"
+                        android:onClick="filmeFavorito"
+                        android:src="@drawable/estrela_preenchida_48"
+                        android:visibility="gone"
+                        android:clickable="true"/>
+
+                </LinearLayout>
+
+                <android.support.v4.widget.Space
+                    android:layout_width="match_parent"
+                    android:layout_height="10dp" />
+
+                <LinearLayout
+                    android:layout_margin="8dp"
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -122,23 +165,23 @@
 
                 <LinearLayout
                     android:layout_margin="8dp"
-                    android:orientation="vertical"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_qadult"
-                        android:text="@string/filme_de_adultos"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textStyle="italic"
-                        android:textColor="@android:color/holo_red_light"/>
+                        android:text="@string/filme_de_adultos"
+                        android:textColor="@android:color/holo_red_light"
+                        android:textStyle="italic" />
 
                     <TextView
                         android:id="@+id/tv_adult"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="16dp"/>
+                        android:textSize="16dp" />
 
                 </LinearLayout>
 

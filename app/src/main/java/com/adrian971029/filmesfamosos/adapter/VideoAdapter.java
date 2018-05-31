@@ -1,6 +1,8 @@
 package com.adrian971029.filmesfamosos.adapter;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -11,6 +13,7 @@ import android.widget.TextView;
 
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.model.Video;
+import com.adrian971029.filmesfamosos.utils.Constants;
 
 import java.util.List;
 
@@ -39,7 +42,11 @@ public class VideoAdapter extends ArrayAdapter<Video> {
         holder.tituloVideo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                String url = Constants.URL_YOUTUBE + video.getKey();
+                Uri uri = Uri.parse(url);
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(uri);
+                view.getContext().startActivity(intent);
             }
         });
 
