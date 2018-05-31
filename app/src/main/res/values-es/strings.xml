@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PeliculasFamosas</string>
+    <string name="baixando_filmes">Descargando informaciones de las peliculas</string>
+    <string name="falha_filmes">Error al obtener peliculas</string>
+    <string name="sem_conexao">Sin Conexión</string>
+    <string name="populares">Populares</string>
+    <string name="mais_votadas">Más votadas</string>
+    <string name="titulo">Título:</string>
+    <string name="titulo_original">Título Original:</string>
+    <string name="filme_de_adultos">Pelicula de Adultos:</string>
+    <string name="avalia_o_dos_usuarios">Avaliación:</string>
+    <string name="data_de_lan_amento">Data de Lanzamiento:</string>
+    <string name="descricao">Descrición:</string>
+    <string name="action_title">Peliculas Famosas</string>
+    <string name="cd_reproducao_trailer">Reproducción de trailer</string>
+    <string name="falha_filmes_trailers">Error al obtener trailers de los filmes</string>
+    <string name="baixando_informacoes">Descargando informaciones</string>
+    <string name="trailers">Trailers:</string>
+    <string name="comentarios">Comentarios:</string>
+    <string name="falha_reviews">Error al obter reviews</string>
+    <string name="lbl_favorito">Favorito</string>
+    <string name="lbl_favoritos">Favoritos</string>
+</resources>
