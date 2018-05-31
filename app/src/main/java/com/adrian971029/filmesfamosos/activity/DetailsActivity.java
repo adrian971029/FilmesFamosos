@@ -23,14 +23,12 @@ import com.adrian971029.filmesfamosos.model.Movie;
 import com.adrian971029.filmesfamosos.model.Review;
 import com.adrian971029.filmesfamosos.model.Video;
 import com.adrian971029.filmesfamosos.utils.Constants;
-import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.BindViews;
 import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -121,7 +119,7 @@ public class DetailsActivity extends BaseActivity {
         mAdapterVideo = new VideoAdapter(getApplicationContext(),mVideo);
         mListViewVideo.setAdapter(mAdapterVideo);
 
-        if(HttpConnection.temConexao(this)){
+        if(temConexao(this)){
             chamaVideos();
         }
         else{
@@ -138,7 +136,7 @@ public class DetailsActivity extends BaseActivity {
         mAdapterReview = new ReviewAdapter(getApplicationContext(),mReview);
         mListViewReview.setAdapter(mAdapterReview);
 
-        if(HttpConnection.temConexao(this)){
+        if(temConexao(this)){
                 chamaReviews();
         }
         else{

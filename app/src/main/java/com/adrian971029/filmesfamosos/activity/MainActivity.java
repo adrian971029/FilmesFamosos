@@ -1,5 +1,8 @@
 package com.adrian971029.filmesfamosos.activity;
 
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +25,6 @@ import com.adrian971029.filmesfamosos.io.response.PopularResponse;
 import com.adrian971029.filmesfamosos.io.response.TopRatedResponse;
 import com.adrian971029.filmesfamosos.model.Movie;
 import com.adrian971029.filmesfamosos.task.MovieTask;
-import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends BaseActivity {
+
+    private static final String TAG  = Movie.class.getSimpleName();
 
     @BindView(R.id.grid_view) GridView mGridView;
     @BindView(R.id.tv_aguarde) TextView mTextMensagem;
@@ -108,7 +112,7 @@ public class MainActivity extends BaseActivity {
         mAdapter = new MovieAdapter(getApplicationContext(),mMovie);
         mGridView.setAdapter(mAdapter);
 
-        if(HttpConnection.temConexao(this)){
+        if(temConexao(this)){
             chamaFilmesPopular();
         }
         else{
@@ -125,7 +129,7 @@ public class MainActivity extends BaseActivity {
         mAdapter = new MovieAdapter(getApplicationContext(),mMovie);
         mGridView.setAdapter(mAdapter);
 
-        if(HttpConnection.temConexao(this)){
+        if(temConexao(this)){
             chamaTopRated();
         }
         else{
@@ -194,7 +198,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onResponse(Call<TopRatedResponse> call, Response<TopRatedResponse> response) {
                 if(!response.isSuccessful()) {
-                    Log.i("TAG","Error:" + response.code());
+                    Log.i(TAG,"Error:" + response.code());
                     exibirProgress(false);
                 }
                 else {
@@ -211,7 +215,7 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onFailure(Call<TopRatedResponse> call, Throwable t) {
                 exibirProgress(false);
-                Log.e("Movies","Error:" + t.getMessage());
+                Log.e(TAG,"Error:" + t.getMessage());
             }
 
         });
