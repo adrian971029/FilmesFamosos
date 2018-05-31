@@ -26,19 +26,21 @@ import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends BaseActivity {
 
+    @BindView(R.id.grid_view) GridView mGridView;
+    @BindView(R.id.tv_aguarde) TextView mTextMensagem;
+    @BindView(R.id.progressBar) ProgressBar mProgressBar;
+    @BindView(R.id.tool_bar) Toolbar mToolbar;
     private List<Movie> mMovie;
     private List<Movie> mMovieData;
-    private GridView mGridView;
-    private TextView mTextMensagem;
-    private ProgressBar mProgressBar;
     private ArrayAdapter<Movie> mAdapter;
-    private Toolbar mToolbar;
     private MovieDAO movieDAO;
     private MovieTask mMovieTask;
     private MenuItem menuItem;
@@ -48,7 +50,9 @@ public class MainActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        inicializandoComponentes();
+        ButterKnife.bind(this);
+
+        mGridView.setEmptyView(mTextMensagem);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbar.setTitle(R.string.action_title);
@@ -142,14 +146,6 @@ public class MainActivity extends BaseActivity {
             mMovieTask.execute();
         }
 
-    }
-
-    private void inicializandoComponentes(){
-        mToolbar = (Toolbar) findViewById(R.id.tool_bar);
-        mTextMensagem = (TextView)findViewById(R.id.tv_aguarde);
-        mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
-        mGridView = (GridView)findViewById(R.id.grid_view);
-        mGridView.setEmptyView(mTextMensagem);
     }
 
     private void exibirProgress(boolean exibir){

@@ -2,7 +2,6 @@ package com.adrian971029.filmesfamosos.activity;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -30,14 +29,31 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.BindViews;
+import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailsActivity extends BaseActivity {
 
-    private ImageView mPosterPath,mBackdropPath;
-    private TextView mOverview,mTitle,mOriginalTitle,mReleaseDate,mAdult,mVoteAverage;
+    @BindView(R.id.imgPoster_Path) ImageView mPosterPath;
+    @BindView(R.id.imgBackdrop_Path) ImageView mBackdropPath;
+    @BindView(R.id.img_simfavorito) ImageView mFavoritoImageView;
+    @BindView(R.id.img_naofavorito) ImageView mNaoFavoritoImageView;
+    @BindView(R.id.tv_overview) TextView mOverview;
+    @BindView(R.id.tv_title) TextView mTitle;
+    @BindView(R.id.tv_originalTitle) TextView mOriginalTitle;
+    @BindView(R.id.tv_releaseDate) TextView mReleaseDate;
+    @BindView(R.id.tv_adult) TextView mAdult;
+    @BindView(R.id.tv_voteAverage) TextView mVoteAverage;
+    @BindView(R.id.lv_trailerVideo) ListView mListViewVideo;
+    @BindView(R.id.lv_reviews) ListView mListViewReview;
+    @BindView(R.id.progressBarVideo) ProgressBar mProgressBarVideo;
+    @BindView(R.id.progressBarReviews) ProgressBar mProgressBarReview;
+    @BindView(R.id.tv_aguardeVideo) TextView mTextMensagemVideo;
+    @BindView(R.id.tv_aguardeReviews) TextView mTextMensagemReview;
     private String poster_path,backdrop_path,overview,title,original_title,realese_date;
     private long id_movie;
     private boolean adult;
@@ -46,13 +62,6 @@ public class DetailsActivity extends BaseActivity {
     private List<Review> mReview;
     private ArrayAdapter<Video> mAdapterVideo;
     private ArrayAdapter<Review> mAdapterReview;
-    private ListView mListViewVideo;
-    private ListView mListViewReview;
-    private ProgressBar mProgressBarVideo;
-    private ProgressBar mProgressBarReview;
-    private TextView mTextMensagemVideo;
-    private TextView mTextMensagemReview;
-    private ImageView mFavoritoImageView, mNaoFavoritoImageView;
     private boolean controlFavorito;
     private MovieDAO movieDAO;
     private Movie movie;
@@ -63,7 +72,8 @@ public class DetailsActivity extends BaseActivity {
         setContentView(R.layout.activity_details);
         controlFavorito = false;
 
-        inicializandoComponentes();
+        ButterKnife.bind(this);
+
         recibiendoValores();
         mostrandoValores();
         exibirProgressVideo(true);
@@ -72,25 +82,6 @@ public class DetailsActivity extends BaseActivity {
         crearLayoutTrailer();
         crearLayoutReview();
 
-    }
-
-    private void inicializandoComponentes(){
-        mPosterPath = (ImageView)findViewById(R.id.imgPoster_Path);
-        mBackdropPath = (ImageView)findViewById(R.id.imgBackdrop_Path);
-        mOverview = (TextView)findViewById(R.id.tv_overview);
-        mTitle = (TextView)findViewById(R.id.tv_title);
-        mOriginalTitle = (TextView)findViewById(R.id.tv_originalTitle);
-        mAdult = (TextView)findViewById(R.id.tv_adult);
-        mReleaseDate = (TextView)findViewById(R.id.tv_releaseDate);
-        mVoteAverage = (TextView)findViewById(R.id.tv_voteAverage);
-        mListViewVideo = (ListView)findViewById(R.id.lv_trailerVideo);
-        mListViewReview = (ListView)findViewById(R.id.lv_reviews);
-        mProgressBarVideo = (ProgressBar)findViewById(R.id.progressBarVideo);
-        mTextMensagemVideo = (TextView)findViewById(R.id.tv_aguardeVideo);
-        mProgressBarReview = (ProgressBar)findViewById(R.id.progressBarReviews);
-        mTextMensagemReview = (TextView)findViewById(R.id.tv_aguardeReviews);
-        mFavoritoImageView = (ImageView)findViewById(R.id.img_simfavorito);
-        mNaoFavoritoImageView = (ImageView)findViewById(R.id.img_naofavorito);
     }
 
     private void recibiendoValores(){
