@@ -21,6 +21,7 @@ import com.adrian971029.filmesfamosos.io.ApiService;
 import com.adrian971029.filmesfamosos.io.response.PopularResponse;
 import com.adrian971029.filmesfamosos.io.response.TopRatedResponse;
 import com.adrian971029.filmesfamosos.model.Movie;
+import com.adrian971029.filmesfamosos.task.MovieTask;
 import com.adrian971029.filmesfamosos.utils.network.HttpConnection;
 
 import java.util.ArrayList;
@@ -142,7 +143,7 @@ public class MainActivity extends BaseActivity {
         mGridView.setAdapter(mAdapter);
 
         if(mMovieTask == null || mMovieTask.getStatus() != AsyncTask.Status.RUNNING){
-            mMovieTask = new MovieTask();
+            mMovieTask = new MovieTask(movieDAO,mMovieData,mAdapter,mTextMensagem);
             mMovieTask.execute();
         }
 
@@ -215,33 +216,6 @@ public class MainActivity extends BaseActivity {
 
         });
 
-    }
-
-    class MovieTask extends AsyncTask<Void,Void,List<Movie>> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<Movie> doInBackground(Void... voids) {
-            return movieDAO.buscarTodos();
-        }
-
-        @Override
-        protected void onPostExecute(List<Movie> movies) {
-            super.onPostExecute(movies);
-            exibirProgress(false);
-            if(movies != null){
-                mMovieData.clear();
-                mMovieData.addAll(movies);
-                mAdapter.notifyDataSetChanged();
-            }
-            else {
-                mTextMensagem.setText("Não tem filmes favoritos");
-            }
-        }
     }
 
     @Override
