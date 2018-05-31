@@ -43,6 +43,7 @@ public class Movie implements Serializable{
     }
 
 
+
     public String getPoster_path() {
         return poster_path;
     }
