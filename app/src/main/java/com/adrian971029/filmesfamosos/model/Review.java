@@ -1,23 +1,42 @@
 package com.adrian971029.filmesfamosos.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class Review implements Serializable {
+import com.google.gson.annotations.SerializedName;
 
+public class Review implements Parcelable {
+
+    @SerializedName("id")
     private String id;
+    @SerializedName("author")
     private String author;
+    @SerializedName("content")
     private String content;
+    @SerializedName("url")
     private String url;
 
     public Review() {
     }
 
-    public Review(String id, String author, String content, String url) {
-        this.id = id;
-        this.author = author;
-        this.content = content;
-        this.url = url;
+    private Review(Parcel in) {
+        id = in.readString();
+        author = in.readString();
+        content = in.readString();
+        url = in.readString();
     }
+
+    public static final Creator<Review> CREATOR = new Creator<Review>() {
+        @Override
+        public Review createFromParcel(Parcel in) {
+            return new Review(in);
+        }
+
+        @Override
+        public Review[] newArray(int size) {
+            return new Review[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -49,5 +68,18 @@ public class Review implements Serializable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(author);
+        parcel.writeString(content);
+        parcel.writeString(url);
     }
 }

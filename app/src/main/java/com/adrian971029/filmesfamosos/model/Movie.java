@@ -1,48 +1,61 @@
 package com.adrian971029.filmesfamosos.model;
 
-import java.io.Serializable;
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.google.gson.annotations.SerializedName;
 
 /**
  * Created by Adrian on 23/03/2018.
  */
 
-public class Movie implements Serializable{
+public class Movie implements Parcelable{
 
+    @SerializedName("poster_path")
     private String poster_path;
+    @SerializedName("adult")
     private boolean adult;
+    @SerializedName("overview")
     private String overview;
+    @SerializedName("release_date")
     private String release_date;
+    @SerializedName("id")
     private long id;
+    @SerializedName("original_title")
     private String original_title;
-    private String original_language;
+    @SerializedName("title")
     private String title;
+    @SerializedName("backdrop_path")
     private String backdrop_path;
-    private float popularity;
-    private long vote_count;
-    private boolean video;
+    @SerializedName("vote_average")
     private float vote_average;
 
-    public Movie(){
-
+    public Movie() {
     }
 
-    public Movie(String poster_path, boolean adult, String overview, String release_date, long id, String original_title, String original_language, String title, String backdrop_path, float popularity, long vote_count, boolean video, float vote_average) {
-        this.setPoster_path(poster_path);
-        this.setAdult(adult);
-        this.setOverview(overview);
-        this.setRelease_date(release_date);
-        this.setId(id);
-        this.setOriginal_title(original_title);
-        this.setOriginal_language(original_language);
-        this.setTitle(title);
-        this.setBackdrop_path(backdrop_path);
-        this.setPopularity(popularity);
-        this.setVote_count(vote_count);
-        this.setVideo(video);
-        this.vote_average = vote_average;
+    private Movie(Parcel in) {
+        poster_path = in.readString();
+        adult = in.readByte() != 0;
+        overview = in.readString();
+        release_date = in.readString();
+        id = in.readLong();
+        original_title = in.readString();
+        title = in.readString();
+        backdrop_path = in.readString();
+        vote_average = in.readFloat();
     }
 
+    public static final Parcelable.Creator<Movie>
+            CREATOR = new Parcelable.Creator<Movie>() {
 
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public String getPoster_path() {
         return poster_path;
@@ -92,14 +105,6 @@ public class Movie implements Serializable{
         this.original_title = original_title;
     }
 
-    public String getOriginal_language() {
-        return original_language;
-    }
-
-    public void setOriginal_language(String original_language) {
-        this.original_language = original_language;
-    }
-
     public String getTitle() {
         return title;
     }
@@ -116,30 +121,6 @@ public class Movie implements Serializable{
         this.backdrop_path = backdrop_path;
     }
 
-    public float getPopularity() {
-        return popularity;
-    }
-
-    public void setPopularity(float popularity) {
-        this.popularity = popularity;
-    }
-
-    public long getVote_count() {
-        return vote_count;
-    }
-
-    public void setVote_count(long vote_count) {
-        this.vote_count = vote_count;
-    }
-
-    public boolean isVideo() {
-        return video;
-    }
-
-    public void setVideo(boolean video) {
-        this.video = video;
-    }
-
     public float getVote_average() {
         return vote_average;
     }
@@ -149,4 +130,21 @@ public class Movie implements Serializable{
     }
 
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(poster_path);
+        parcel.writeByte((byte)(adult ? 1 : 0));
+        parcel.writeString(overview);
+        parcel.writeString(release_date);
+        parcel.writeLong(id);
+        parcel.writeString(original_title);
+        parcel.writeString(title);
+        parcel.writeString(backdrop_path);
+        parcel.writeFloat(vote_average);
+    }
 }

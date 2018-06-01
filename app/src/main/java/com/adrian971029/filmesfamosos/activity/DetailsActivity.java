@@ -36,6 +36,8 @@ import retrofit2.Response;
 
 public class DetailsActivity extends BaseActivity {
 
+    private static final String MOVIE = "movie";
+
     @BindView(R.id.imgPoster_Path) ImageView mPosterPath;
     @BindView(R.id.imgBackdrop_Path) ImageView mBackdropPath;
     @BindView(R.id.img_simfavorito) ImageView mFavoritoImageView;
@@ -72,6 +74,7 @@ public class DetailsActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
+        movie = new Movie();
         recibiendoValores();
         mostrandoValores();
         exibirProgressVideo(true);
@@ -83,16 +86,16 @@ public class DetailsActivity extends BaseActivity {
     }
 
     private void recibiendoValores(){
-        Intent intent = getIntent();
-        id_movie = intent.getLongExtra("ID_MOVIE",0);
-        poster_path = intent.getStringExtra("POSTER_PATH");
-        backdrop_path = intent.getStringExtra("BACKDROP_PATH");
-        overview = intent.getStringExtra("OVERVIEW");
-        title = intent.getStringExtra("TITLE");
-        original_title = intent.getStringExtra("ORIGINAL_TITLE");
-        realese_date = intent.getStringExtra("RELEASE_DATE");
-        adult = intent.getBooleanExtra("ADULT",false);
-        vote_average = intent.getFloatExtra("VOTE_AVERAGE",0);
+        movie = getIntent().getExtras().getParcelable(MOVIE);
+        id_movie = movie.getId();
+        poster_path = movie.getPoster_path();
+        backdrop_path = movie.getBackdrop_path();
+        overview = movie.getOverview();
+        title = movie.getTitle();
+        original_title = movie.getOriginal_title();
+        realese_date = movie.getRelease_date();
+        adult = movie.isAdult();
+        vote_average = movie.getVote_average();
     }
 
     private void mostrandoValores(){

@@ -25,6 +25,7 @@ import java.util.List;
 public class MovieAdapter extends ArrayAdapter<Movie> {
 
     private List<Movie> mListMovie;
+    private static final String MOVIE = "movie";
 
     @Override
     public int getCount() {
@@ -67,15 +68,7 @@ public class MovieAdapter extends ArrayAdapter<Movie> {
 
     private void llamaDetailsActivity(Movie movie){
         Intent i = new Intent(getContext(), DetailsActivity.class);
-        i.putExtra("ID_MOVIE",movie.getId());
-        i.putExtra("POSTER_PATH",movie.getPoster_path());
-        i.putExtra("ADULT",movie.isAdult());
-        i.putExtra("OVERVIEW",movie.getOverview());
-        i.putExtra("RELEASE_DATE",movie.getRelease_date());
-        i.putExtra("ORIGINAL_TITLE",movie.getOriginal_title());
-        i.putExtra("VOTE_AVERAGE",movie.getVote_average());
-        i.putExtra("TITLE",movie.getTitle());
-        i.putExtra("BACKDROP_PATH",movie.getBackdrop_path());
+        i.putExtra(MOVIE,movie);
         getContext().startActivity(i);
     }
 
