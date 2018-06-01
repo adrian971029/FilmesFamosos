@@ -1,5 +1,6 @@
 package com.adrian971029.filmesfamosos.io;
 
+import com.adrian971029.filmesfamosos.BuildConfig;
 import com.adrian971029.filmesfamosos.io.response.PopularResponse;
 import com.adrian971029.filmesfamosos.io.response.ReviewResponse;
 import com.adrian971029.filmesfamosos.io.response.TopRatedResponse;
@@ -12,14 +13,16 @@ import retrofit2.http.Path;
 
 public interface ApiService {
 
+    public final String API_KEY = BuildConfig.api_key;
+
     @GET(Constants.POPULAR_MOVIE_URL +
-                    Constants.API_KEY +
+                    API_KEY +
                     Constants.Q_LANGUAGE +
                     Constants.LANGUAGE)
     Call<PopularResponse> getPopularMovies();
 
     @GET(Constants.TOP_RATED_URL +
-            Constants.API_KEY +
+            API_KEY +
             Constants.Q_LANGUAGE +
             Constants.LANGUAGE)
     Call<TopRatedResponse> getTopRatedMovies();
@@ -27,7 +30,7 @@ public interface ApiService {
     @GET(Constants.MOVIE +
             "{id}" + "/" +
             Constants.VIDEO_URL +
-            Constants.API_KEY +
+            API_KEY +
             Constants.Q_LANGUAGE +
             Constants.LANGUAGE)
     Call<VideoResponse> getVideos(@Path(value = "id", encoded = true) String id);
@@ -35,7 +38,7 @@ public interface ApiService {
     @GET(Constants.MOVIE +
             "{id}" + "/" +
             Constants.REVIEWS_URL +
-            Constants.API_KEY +
+            API_KEY +
             Constants.Q_LANGUAGE +
             Constants.LANGUAGE)
     Call<ReviewResponse> getReviews(@Path(value = "id", encoded = true) String id);

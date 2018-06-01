@@ -6,8 +6,6 @@ package com.adrian971029.filmesfamosos.utils;
 
 public class Constants {
 
-    public static final String API_KEY = "";
-
     public static final String URL_BASE = "https://api.themoviedb.org/3/";
     public static final String POPULAR_MOVIE_URL = "movie/popular?api_key=";
     public static final String TOP_RATED_URL = "movie/top_rated?api_key=";
