@@ -41,6 +41,60 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/progressBar"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true"
+        android:text="@string/baixando_filmes"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/img_SemConexao"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/sem_conex"
+        android:visibility="gone"/>
+
+    <ImageView
+        android:id="@+id/img_SemFavoritos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/sem_favoritos"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/tv_semConexao"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/img_SemConexao"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:textSize="16sp"
+        android:textColor="@color/gris"
+        android:text="@string/sem_conexao"/>
+
+    <TextView
+        android:id="@+id/tv_semFavoritos"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/img_SemFavoritos"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:textSize="18sp"
+        android:textColor="@color/branco"
+        android:text="@string/lbl_nao_favoritos"/>
+
+    <ImageView
+        android:id="@+id/img_atualizar"
+        android:layout_marginTop="8dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_below="@id/tv_semConexao"
+        android:src="@drawable/btn_atualizar"
+        android:visibility="gone"
+        android:onClick="atualizar"/>
 
 </RelativeLayout>

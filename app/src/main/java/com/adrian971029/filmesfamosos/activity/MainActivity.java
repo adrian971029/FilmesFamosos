@@ -12,8 +12,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.MovieAdapter;
@@ -38,17 +40,27 @@ import retrofit2.Response;
 public class MainActivity extends BaseActivity {
 
     private static final String TAG  = Movie.class.getSimpleName();
+    private static final int POPULAR_MOVIE  = 1;
+    private static final int TOP_RATED  = 2;
+    private static final int FAVORITES  = 3;
 
     @BindView(R.id.grid_view) GridView mGridView;
     @BindView(R.id.tv_aguarde) TextView mTextMensagem;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     @BindView(R.id.tool_bar) Toolbar mToolbar;
+    @BindView(R.id.img_SemConexao) ImageView imgSemConexao;
+    @BindView(R.id.tv_semConexao) TextView mTextMensagemSemConexao;
+    @BindView(R.id.img_SemFavoritos) ImageView imgSemFavoritos;
+    @BindView(R.id.tv_semFavoritos) TextView mTextMensagemSemFavoritos;
+    @BindView(R.id.img_atualizar) ImageView imgAtualizar;
     private List<Movie> mMovie;
     private List<Movie> mMovieData;
     private ArrayAdapter<Movie> mAdapter;
     private MovieDAO movieDAO;
     private MovieTask mMovieTask;
     private MenuItem menuItem;
+    private int controlLayout;
+    public static boolean temFavoritos;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +69,8 @@ public class MainActivity extends BaseActivity {
 
         ButterKnife.bind(this);
 
-        mGridView.setEmptyView(mTextMensagem);
+        temFavoritos = false;
+        exibirMensagemSemConexao(false);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mToolbar.setTitle(R.string.action_title);
@@ -81,16 +94,25 @@ public class MainActivity extends BaseActivity {
 
         switch (id) {
             case R.id.menu_popular_movie:
+                exibirProgress(true);
+                exibirMensagemFavoritos(false);
+                exibirMensagemSemConexao(false);
                 mAdapter.clear();
                 mMovie.clear();
                 crearLayoutPopular();
                 break;
             case R.id.menu_top_rated:
+                exibirProgress(true);
+                exibirMensagemFavoritos(false);
+                exibirMensagemSemConexao(false);
                 mAdapter.clear();
                 mMovie.clear();
                 crearLayoutTopRated();
                 break;
             case R.id.menu_favorito:
+                exibirProgress(false);
+                exibirMensagemFavoritos(false);
+                exibirMensagemSemConexao(false);
                 mAdapter.clear();
                 mMovie.clear();
                 if(mMovieData != null) {
@@ -106,6 +128,7 @@ public class MainActivity extends BaseActivity {
     }
 
     private void crearLayoutPopular(){
+        controlLayout = POPULAR_MOVIE;
         if(mMovie == null){
             mMovie = new ArrayList<Movie>();
         }
@@ -113,16 +136,18 @@ public class MainActivity extends BaseActivity {
         mGridView.setAdapter(mAdapter);
 
         if(temConexao(this)){
+            exibirMensagemSemConexao(false);
             chamaFilmesPopular();
         }
         else{
-            exibirProgress(false);
-            mTextMensagem.setText(R.string.sem_conexao);
+            exibirMensagemSemConexao(true);
+            Toast.makeText(this, R.string.lbl_tente_novamente,Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void crearLayoutTopRated(){
+        controlLayout = TOP_RATED;
         if(mMovie == null){
             mMovie = new ArrayList<Movie>();
         }
@@ -130,16 +155,18 @@ public class MainActivity extends BaseActivity {
         mGridView.setAdapter(mAdapter);
 
         if(temConexao(this)){
+            exibirMensagemSemConexao(false);
             chamaTopRated();
         }
         else{
-            exibirProgress(false);
-            mTextMensagem.setText(R.string.sem_conexao);
+            exibirMensagemSemConexao(true);
+            Toast.makeText(this, R.string.lbl_tente_novamente,Toast.LENGTH_SHORT).show();
         }
 
     }
 
     private void crearLayoutFavoritos(){
+        controlLayout = FAVORITES;
         if(mMovieData == null){
             mMovieData = new ArrayList<Movie>();
         }
@@ -147,7 +174,7 @@ public class MainActivity extends BaseActivity {
         mGridView.setAdapter(mAdapter);
 
         if(mMovieTask == null || mMovieTask.getStatus() != AsyncTask.Status.RUNNING){
-            mMovieTask = new MovieTask(movieDAO,mMovieData,mAdapter,mTextMensagem);
+            mMovieTask = new MovieTask(movieDAO,mMovieData,mAdapter,imgSemFavoritos,mTextMensagemSemFavoritos);
             mMovieTask.execute();
         }
 
@@ -156,6 +183,17 @@ public class MainActivity extends BaseActivity {
     private void exibirProgress(boolean exibir){
         mTextMensagem.setVisibility(exibir ? View.VISIBLE : View.GONE);
         mProgressBar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+    }
+
+    private void exibirMensagemSemConexao(boolean exibir) {
+        imgSemConexao.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        mTextMensagemSemConexao.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        imgAtualizar.setVisibility(exibir ? View.VISIBLE : View.GONE);
+    }
+
+    private void exibirMensagemFavoritos(boolean exibir) {
+        imgSemFavoritos.setVisibility(exibir ? View.VISIBLE : View.GONE);
+        mTextMensagemSemFavoritos.setVisibility(exibir ? View.VISIBLE : View.GONE);
     }
 
     private void chamaFilmesPopular(){
@@ -229,16 +267,61 @@ public class MainActivity extends BaseActivity {
             int itemControl = menuItem.getItemId();
             switch (itemControl) {
                 case R.id.menu_popular_movie:
+                    exibirProgress(true);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
                     mAdapter.clear();
                     mMovie.clear();
                     crearLayoutPopular();
                     break;
                 case R.id.menu_top_rated:
+                    exibirProgress(true);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
                     mAdapter.clear();
                     mMovie.clear();
                     crearLayoutTopRated();
                     break;
                 case R.id.menu_favorito:
+                    exibirProgress(false);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
+                    mAdapter.clear();
+                    mMovie.clear();
+                    if (mMovieData != null) {
+                        mMovieData.clear();
+                    }
+                    crearLayoutFavoritos();
+
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    public void atualizar(View view) {
+        switch (controlLayout) {
+                case POPULAR_MOVIE:
+                    exibirProgress(true);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
+                    mAdapter.clear();
+                    mMovie.clear();
+                    crearLayoutPopular();
+                    break;
+                case TOP_RATED:
+                    exibirProgress(true);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
+                    mAdapter.clear();
+                    mMovie.clear();
+                    crearLayoutTopRated();
+                    break;
+                case FAVORITES:
+                    exibirProgress(false);
+                    exibirMensagemFavoritos(false);
+                    exibirMensagemSemConexao(false);
                     mAdapter.clear();
                     mMovie.clear();
                     if (mMovieData != null) {
@@ -250,5 +333,5 @@ public class MainActivity extends BaseActivity {
                     break;
             }
         }
-    }
+
 }

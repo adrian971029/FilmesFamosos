@@ -5,4 +5,6 @@
     <color name="colorAccent">#FF4081</color>
     <color name="azulClaro">#0C69A5</color>
     <color name="azulOscuro">#1A4D6E</color>
+    <color name="gris">#99A3A4</color>
+    <color name="branco">#FFFFFF</color>
 </resources>

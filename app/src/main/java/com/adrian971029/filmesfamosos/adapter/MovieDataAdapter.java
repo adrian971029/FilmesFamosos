@@ -20,8 +20,17 @@ import java.util.List;
 
 public class MovieDataAdapter extends ArrayAdapter<Movie>{
 
+    private List<Movie> mListMovie;
+
+
+    @Override
+    public int getCount() {
+        return mListMovie.size();
+    }
+
     public MovieDataAdapter(Context context, List<Movie> objects) {
         super(context,0, objects);
+        mListMovie = objects;
     }
 
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
