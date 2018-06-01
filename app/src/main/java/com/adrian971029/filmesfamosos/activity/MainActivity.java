@@ -137,6 +137,7 @@ public class MainActivity extends BaseActivity {
             chamaFilmesPopular();
         }
         else{
+            exibirProgress(false);
             exibirMensagemSemConexao(true);
             Toast.makeText(this, R.string.lbl_tente_novamente,Toast.LENGTH_SHORT).show();
         }
@@ -156,6 +157,7 @@ public class MainActivity extends BaseActivity {
             chamaTopRated();
         }
         else{
+            exibirProgress(false);
             exibirMensagemSemConexao(true);
             Toast.makeText(this, R.string.lbl_tente_novamente,Toast.LENGTH_SHORT).show();
         }
@@ -164,6 +166,7 @@ public class MainActivity extends BaseActivity {
 
     private void crearLayoutFavoritos(){
         controlLayout = FAVORITES;
+        exibirProgress(false);
         if(mMovieData == null){
             mMovieData = new ArrayList<Movie>();
         }
