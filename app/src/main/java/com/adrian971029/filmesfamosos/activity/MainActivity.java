@@ -1,8 +1,5 @@
 package com.adrian971029.filmesfamosos.activity;
 
-import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,7 +17,7 @@ import android.widget.Toast;
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.MovieAdapter;
 import com.adrian971029.filmesfamosos.adapter.MovieDataAdapter;
-import com.adrian971029.filmesfamosos.data.dao.MovieDAO;
+import com.adrian971029.filmesfamosos.data.ContentProviderAccess;
 import com.adrian971029.filmesfamosos.io.ApiAdapter;
 import com.adrian971029.filmesfamosos.io.ApiService;
 import com.adrian971029.filmesfamosos.io.response.PopularResponse;
@@ -56,7 +53,7 @@ public class MainActivity extends BaseActivity {
     private List<Movie> mMovie;
     private List<Movie> mMovieData;
     private ArrayAdapter<Movie> mAdapter;
-    private MovieDAO movieDAO;
+    private ContentProviderAccess providerAccess;
     private MovieTask mMovieTask;
     private MenuItem menuItem;
     private int controlLayout;
@@ -77,7 +74,7 @@ public class MainActivity extends BaseActivity {
         exibirProgress(true);
         crearLayoutPopular();
 
-        movieDAO = new MovieDAO(this);
+        providerAccess = new ContentProviderAccess();
 
     }
 
@@ -174,7 +171,7 @@ public class MainActivity extends BaseActivity {
         mGridView.setAdapter(mAdapter);
 
         if(mMovieTask == null || mMovieTask.getStatus() != AsyncTask.Status.RUNNING){
-            mMovieTask = new MovieTask(movieDAO,mMovieData,mAdapter,imgSemFavoritos,mTextMensagemSemFavoritos);
+            mMovieTask = new MovieTask(this,providerAccess,mMovieData,mAdapter,imgSemFavoritos,mTextMensagemSemFavoritos);
             mMovieTask.execute();
         }
 

@@ -22,4 +22,6 @@
     <string name="lbl_favoritos">Favoritos</string>
     <string name="lbl_nao_favoritos">Não tem favoritos</string>
     <string name="lbl_tente_novamente">Sem Conexão, tente novamente</string>
+    <string name="error_inserir">Error ao inserir em</string>
+    <string name="uri_desconhecida">Uri desconhecida:</string>
 </resources>

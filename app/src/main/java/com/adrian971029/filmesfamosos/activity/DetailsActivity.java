@@ -1,6 +1,5 @@
 package com.adrian971029.filmesfamosos.activity;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,7 +13,7 @@ import android.widget.TextView;
 import com.adrian971029.filmesfamosos.R;
 import com.adrian971029.filmesfamosos.adapter.ReviewAdapter;
 import com.adrian971029.filmesfamosos.adapter.VideoAdapter;
-import com.adrian971029.filmesfamosos.data.dao.MovieDAO;
+import com.adrian971029.filmesfamosos.data.ContentProviderAccess;
 import com.adrian971029.filmesfamosos.io.ApiAdapter;
 import com.adrian971029.filmesfamosos.io.ApiService;
 import com.adrian971029.filmesfamosos.io.response.ReviewResponse;
@@ -63,7 +62,6 @@ public class DetailsActivity extends BaseActivity {
     private ArrayAdapter<Video> mAdapterVideo;
     private ArrayAdapter<Review> mAdapterReview;
     private boolean controlFavorito;
-    private MovieDAO movieDAO;
     private Movie movie;
 
     @Override
@@ -235,7 +233,7 @@ public class DetailsActivity extends BaseActivity {
     }
 
     public void filmeNaoFavorito(View view) {
-        if (!inserirCadastroBanco()) return;
+        inserirCadastroBanco();
         defineVisivilidadFilmeFavorito(true);
         guardandoFavorito(true);
     }
@@ -282,9 +280,7 @@ public class DetailsActivity extends BaseActivity {
         controlFavorito();
     }
 
-    private boolean inserirCadastroBanco() {
-        movieDAO = new MovieDAO(this);
-        boolean sucesso = false;
+    private void inserirCadastroBanco() {
 
         try {
 
@@ -299,34 +295,22 @@ public class DetailsActivity extends BaseActivity {
             movie.setBackdrop_path(backdrop_path);
             movie.setVote_average(vote_average);
 
-            long codMovie = movieDAO.inserir(movie);
-
-            if(codMovie > 0){
-                sucesso = true;
-            }
-            else {
-                sucesso = false;
-            }
+            ContentProviderAccess.inserirContentProvider(this,movie);
 
         }catch (Exception e) {
             e.printStackTrace();
         }
 
-        return sucesso;
-
     }
 
     private boolean deletarCadastroBanco(String id){
-        movieDAO = new MovieDAO(this);
         boolean sucesso = false;
         try {
-           sucesso = movieDAO.deletar(movie,id);
+           sucesso = ContentProviderAccess.deletar(movie,id,this);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return sucesso;
-
     }
 
 

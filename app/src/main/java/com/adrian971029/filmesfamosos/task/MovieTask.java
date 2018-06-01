@@ -1,27 +1,29 @@
 package com.adrian971029.filmesfamosos.task;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.adrian971029.filmesfamosos.activity.MainActivity;
-import com.adrian971029.filmesfamosos.data.dao.MovieDAO;
+import com.adrian971029.filmesfamosos.data.ContentProviderAccess;
 import com.adrian971029.filmesfamosos.model.Movie;
 
 import java.util.List;
 
 public class MovieTask extends AsyncTask<Void,Void,List<Movie>> {
 
-    private MovieDAO movieDAO;
+    private ContentProviderAccess providerAccess;
     private List<Movie> mMovieData;
     private ArrayAdapter<Movie> mAdapter;
     private ImageView imgSemFavoritos;
     private TextView mTextMensagemSemFavoritos;
+    private Context context;
 
-    public MovieTask(MovieDAO movieDAO, List<Movie> mMovieData, ArrayAdapter<Movie> mAdapter, ImageView imgSemFavoritos, TextView mTextMensagemSemFavoritos) {
-        this.movieDAO = movieDAO;
+    public MovieTask(Context context, ContentProviderAccess providerAccess, List<Movie> mMovieData, ArrayAdapter<Movie> mAdapter, ImageView imgSemFavoritos, TextView mTextMensagemSemFavoritos) {
+        this.context = context;
+        this.providerAccess = providerAccess;
         this.mMovieData = mMovieData;
         this.mAdapter = mAdapter;
         this.imgSemFavoritos = imgSemFavoritos;
@@ -35,7 +37,7 @@ public class MovieTask extends AsyncTask<Void,Void,List<Movie>> {
 
     @Override
     protected List<Movie> doInBackground(Void... voids) {
-        return movieDAO.buscarTodos();
+        return providerAccess.buscarTodos(context);
     }
 
     @Override

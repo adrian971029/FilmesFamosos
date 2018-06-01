@@ -24,6 +24,11 @@
             android:name=".activity.DetailsActivity"
             android:launchMode="singleTop">
         </activity>
+        <provider
+            android:authorities="com.adrian971029.filmesfamosos"
+            android:name=".data.FilmesFamososContentProvider"
+            android:exported="false">
+        </provider>
     </application>
 
 </manifest>
